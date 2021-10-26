@@ -4,6 +4,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from django.db.models import Count, Case, When
 
 from store.models import Book, UserBookRelation
 from store.permissions import IsOwnerOrStaffOrReadOnly
@@ -12,7 +13,8 @@ from store.serializers import BookSerializer, UserBookRelationSerializer
 
 class BookViewSet(ModelViewSet):
     permission_classes = [IsOwnerOrStaffOrReadOnly]
-    queryset = Book.objects.all()
+    queryset = Book.objects.all().annotate(
+            annotated_likes=Count(Case(When(userbookrelation__like=True, then=1)))).order_by('id')
     serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filter_fields = ['price']
