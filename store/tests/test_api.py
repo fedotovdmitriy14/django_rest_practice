@@ -129,8 +129,10 @@ class BooksApiTestCase(APITestCase):
             'name': 'test_book1',
             'price': '25.00',
             'author_name': 'Author 1',
-            'likes_count': 0,
-            'annotated_likes': 0
+            # 'likes_count': 0,
+            'annotated_likes': 0,
+            'owner_name': self.user.username,
+            'readers': []
         }
 
         response = self.client.get(url, content_type='application/json')
